@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  todos:
+	build: ./todos
+	container_name: todos
+	env_file: ./todos/.env
+	volumes:
+  	- ./todos/migrations:/usr/src/migrations
+  	- ./todos/app/media:/usr/src/app/media
+	depends_on:
+  	- db
+	expose:
+  	- 80
+
+  nginx:
+	build: ./nginx
+	container_name: nginx
+	depends_on:
+  	- todos
+	ports:
+  	- 80:80
+  
+  db:
+	image: postgres
+	container_name: db
+	env_file: ./todos/.env
+	volumes: 
+  	- pgdata:/var/lib/postgresql/data
+	expose:
+  	- 5432
+
+volumes: 
+  pgdata:
